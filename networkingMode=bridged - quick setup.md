@@ -19,6 +19,7 @@ Again just click GET, and then be patient, ~670 MB download
 
 # Post-install steps
 
+- in elevated PowerShell / Terminal prompt (run as Administrator)
 - Update WSL installation
 `wsl --update`
 - close WSL for now
