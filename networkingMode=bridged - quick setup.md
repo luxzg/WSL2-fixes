@@ -2,7 +2,10 @@
 This is WSL2 bridging in really short, as a reference for those that do it repeatedly, and don't want to ready everything.
 This is version for those that already have Hyper-V, vSwitch, and want Ubuntu distro with systemd networking.
 For full tutorial please go here: https://github.com/luxzg/WSL2-fixes/blob/master/networkingMode%3Dbridged.md
+
 If you haven't EVER setup WSL2 with systemd and bridged networking - please read full file.
+
+If you need more information about commands and configurations mentioned in this guide - pleas read full file.
 
 # Install WSL 2 Preview
 To get latest updates and features, including virtual switch bridging you NEED the latest Preview version and need to get it from Microsoft Store
@@ -59,9 +62,9 @@ dhcp=false
 - change name according to what you've installed from Microsoft Store earlier
 	- Start menu -> Ubuntu
 - it will open first time GUI setup so run with it
-- pick language, Next, enter your name, username and password (2x), Next, Continue
+- pick language, Next, enter your name, username and password (2x)
 	- Note: I had issues because apparently you can't use non latin characters in your name
-- Continue, Apply, and so on, Finish
+- keep pressing Continue / Next / Setup, and so on, ... and Finish
 
 # Starting and updating your WSL2 distro
 
@@ -87,9 +90,8 @@ generateResolvConf = false
 ```
 - exit nano editor and save the file
 `CTRL+X to close, and Y to confirm save over same filename`
-- shut down WSL instance by running these commanda inside active WSL distro prompt
+- shut down WSL instance by running these commands inside active WSL distro prompt
 ```
-exit
 exit
 wsl --shutdown
 ```
@@ -112,7 +114,7 @@ wsl --shutdown
 	6: eth0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
 		link/ether 5c:bb:f6:9e:ee:fa brd ff:ff:ff:ff:ff:ff
 ```
-- to fix this go to directory in which Ubuntu keeps networking configs (if you use different OS you'll need to dig deeper, see reference links at the end of this section)
+- to fix this go to directory in which Ubuntu keeps networking configs (if you use different OS you'll need to dig deeper, see reference links at the end of the full file)
 `cd /lib/systemd/network/`
 - create and edit a new file
 `nano wsl_external.network`
@@ -166,7 +168,7 @@ CTRL+X
 
 One more thing we need to configure is DNS resolving, as at this point you can only ping an IP eg. `8.8.8.8` but not FQDN like `google.com`:
 
-- we've already added `generateResolvConf = false` to wsl.conf telling WSL to NOT generate `resolv.conf` anymore, so now we have to generate it manually
+- we've already added `generateResolvConf = false` to `wsl.conf` telling WSL to NOT generate `resolv.conf` anymore, so now we have to generate it manually
 - edit `resolv.conf` with `nano`
 `nano /etc/resolv.conf`
 - contents
@@ -197,7 +199,6 @@ wsl --shutdown
 	- I had that issue exactly as I have multiple adapters on my PC (any I keep forgetting to connect them when needed)
 - start WSL instance, eg.
 `wsl -d Ubuntu`
-- if you still have that test Apache check if webpage is available without manually starting any services, it should work from any 3rd device in same network; or you can go back to that part and re-run all commands for test
 - check from inside WSL with:
 ```
 ip a
@@ -224,25 +225,22 @@ apt full-upgrade
 ```
 
 # VERY OPTIONAL! Endgame testing
-Here we will install Apache server, allow it to talk on port 80, enable service with systemd, reboot PC, and see if it's still working.
-This confirms working networking, working incoming networking, working networking even after reboot, "stability" of resolv.conf, and working systemd services.
+Here we will install Apache server, enable service with systemd, reboot PC, and see if it's still working once WSL distro starts.
+This confirms working networking, working incoming networking, working networking even after reboot, "stability" of `resolv.conf`, and working `systemd` services.
 
-- command to install server, make sure you're still running as sudo (root), if not - you'll need to repeat "sudo su" as before
+- command to install server, make sure you're still running as sudo (root), if not - you'll need to repeat `sudo su` as before
 `apt install apache2`
 - restart and check status of apache2 service
 ```
 service apache2 restart
 service apache2 status
 ```
-- allow listening on port 80 through iptables
-	- if you use other port change accordingly
-`iptables -I INPUT -p tcp -m tcp --dport 80 -j ACCEPT`
 - check if apache2 is listening on ports as you expected
 `lsof -i -P -n | grep LISTEN`
-- you can now also setup Apache to always run by enabling the service autostart, this is also good test if systemd is actually working
+- you can now also setup Apache to always run by enabling the service autostart, this is also good test if `systemd` is actually working
 `sudo systemctl enable apache2`
 
-### Check if webpage is available from 3rd PC/smarphone by trying http://x.x.x.x/ (your WSL IP) in browser, and if it is, reboot PC, start WSL distro (only start it!), and check that webpage again
+### Check if webpage is available from 3rd PC/smarphone by trying http://x.x.x.x/ (your WSL IP) in browser, and if it is, shutdown WSL, reboot PC, start WSL distro (only start it!), and check that webpage again - it should work!
 
 - if you don't need/want to keep Apache you can remove it now as well
 - to remove apache installation run:
@@ -250,7 +248,5 @@ service apache2 status
 apt remove apache2
 	y
 ```
-- to remove iptables entry run same as before except -D (-I insert vs. -D delete)
-`iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT`
 
 ### That's it!
