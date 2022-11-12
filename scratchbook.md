@@ -2,14 +2,15 @@
 
 ### Reinstall Ubuntu distro without download
 
-- wsl --unregister Ubuntu
-- wsl.exe --install Ubuntu
+- `wsl.exe --unregister Ubuntu`
+- `wsl.exe --install Ubuntu`
 - will start new instance:
   - Enter new UNIX username:
   - New password:
   - Retype new password:
   - passwd: password updated successfully
   - Installation successful!
+- configure `wsl.network` and `wsl.conf` and restart distro
 
 ### nmap + GUI
 
