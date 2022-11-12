@@ -112,3 +112,13 @@ apt-get update
 apt-get upgrade -y
 apt-get full-upgrade -y
 ```
+
+```
+apt-get install apache2
+systemctl enable apache2
+systemctl restart apache2
+exit
+exit
+```
+
+`wsl.exe --shutdown`
