@@ -16,109 +16,111 @@ Just click GET to install
 
 # Install WSL distro, this is for Ubuntu
 
-- install WSL 2 distro according to your preferences, eg Ubuntu from Microsoft Store
+- Install WSL 2 distro according to your preferences, eg Ubuntu from Microsoft Store
 https://www.microsoft.com/en-us/p/ubuntu/9pdxgncfsczv
 Again just click GET, and then be patient, ~670 MB download
 
 # Post-install steps
 
-- in elevated PowerShell / Terminal prompt (run as Administrator)
-- Update WSL installation
+- In elevated PowerShell / Terminal prompt (run as Administrator)
+- Update WSL installation (just in case)
 `wsl --update`
-- close WSL for now
+- Close WSL for now
 `wsl --shutdown`
 
 # Create WSL configuration file with correct settings
 
-- in elevated PowerShell prompt, continued
+- In elevated PowerShell prompt, continued
 ```
 cd ~
 New-Item .wslconfig
 .\.wslconfig
 ```
-- select your choice of text editor to open file
-- if you forgot what was your virtual switch named run this in PowerShell
+- Select your choice of text editor to open file
+- If you forgot what was your virtual switch named run this in PowerShell
 `Get-VMSwitch -SwitchType External`
 
 ### Inside text editor
 
-- now add to your .wslconfig file text like this
+- Now add to your .wslconfig file text like this
 ```
 [wsl2]
 networkingMode=bridged
 vmSwitch=WSL_external
 dhcp=false
+ipv6=true
 ```
-- to clarify:
-`vmSwitch=`
-- defines connection to External Virtual Switch from Hyper-V and needs name of same switch
-- save and close the file
+- To clarify: `vmSwitch=` line defines connection to External Virtual Switch from Hyper-V and needs name of that same switch
+- See full guide file for optional lines like `macAddress=` or in depth explanation of other options
+- Save and close the file
 
 ### VERY IMPORTANT !!! I have seen several posts that made typos in config, if the tutorial "doesn't work" please make sure you check wslconfig and use COPY PASTE !!!
 
 # WSL distro first run
 
-- now you can run and install your distribution
-- change name according to what you've installed from Microsoft Store earlier
+- Now you can run and install your distribution
+- Change name according to what you've installed from Microsoft Store earlier
 	- Start menu -> Ubuntu
-- it will open first time GUI setup so run with it
-- pick language, Next, enter your name, username and password (2x)
+- It will open first time GUI setup so run with it
+- Pick language, Next, enter your name, username and password (2x)
 	- Note: I had issues because apparently you can't use non latin characters in your name
-- keep pressing Continue / Next / Setup, and so on, ... and Finish
+- Keep pressing Continue / Next / Setup, and so on, ... and Finish
 
 # Starting and updating your WSL2 distro
 
-- in Terminal / PowerShell
-- listing all distros
+- In Terminal / PowerShell
+- Listing all distros
 `wsl --list -v`
-- updating distros if you haven't already
+- Updating distros if you haven't already
 `wsl --update`
-- starting distros (eg, start Ubuntu)
+- Starting distros (eg, start Ubuntu)
 `wsl -d Ubuntu`
 
 # systemd setup and check
 `systemd` is default in many distributions right now, so we'd want to use that too to be as close "to the real thing" as possible.
 
-- from inside WSL prompt we need to configure `wsl.conf` file for `systemd` usage, so edit the file
+- From inside WSL prompt we need to configure `wsl.conf` file for `systemd` usage, so edit the file
 `sudo nano /etc/wsl.conf`
-- copy paste following into the file
+- Copy paste following into the file
 ```
 [boot]
 systemd=true
 [network]
 generateResolvConf = false
 ```
-- exit nano editor and save the file
+- Exit nano editor and save the file
 `CTRL+X to close, and Y to confirm save over same filename`
-- shut down WSL instance by running these commands inside active WSL distro prompt
+- Shut down WSL instance by running these commands inside active WSL distro prompt
 ```
 exit
 wsl --shutdown
 ```
 
-- start your WSL instance again, eg.
+- Start your WSL instance again, eg.
 `wsl -d Ubuntu`
-- we can check if systemd is working by running this in the WSL prompt:
+- We can check if systemd is working by running this in the WSL prompt:
 `systemctl list-unit-files --type=service`
+
+- Note: there have been reports that enabling systemd on existing WSL2 instance can make it stop responding altogether, but simple fix is to reboot the whole host PC, doing just WSL restart wasn't enough, but after reboot everything worked as expected
 
 # Completely client-side networking with systemd related services
 
 ### Now we need to configure networking inside WSL OS, because we've lost the help from WSL (sub)system itself, so let's dig in!
 
-- get root
+- Get root
 `sudo su`
-- confirm that you don't have any networking
+- Confirm that you don't have any networking
 `ip a`
-- you will see something like this, `eth0` with MAC but no IP address assigned
+- You will see something like this, `eth0` with MAC but no IP address assigned
 ```
 	6: eth0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
 		link/ether 5c:bb:f6:9e:ee:fa brd ff:ff:ff:ff:ff:ff
 ```
-- to fix this go to directory in which Ubuntu keeps networking configs (if you use different OS you'll need to dig deeper, see reference links at the end of the full file)
+- To fix this go to directory in which Ubuntu keeps networking configs (if you use different OS you'll need to dig deeper, see reference links at the end of the full guide file)
 `cd /lib/systemd/network/`
-- create and edit a new file
+- Create and edit a new file
 `nano wsl_external.network`
-- contents of the file (use copy/paste)
+- Contents of the file (use copy/paste)
 ```
 [Match]
 Name=eth0
@@ -136,27 +138,27 @@ CriticalConnection=true
 RouteMetric=10
 UseDomains=true
 ```
-- explanation
+- Explanation
 	- `eth0` is name of the interface
 	- `Description` is whatever you want it to be
 	- `DHCP=true` tells the networking stack to use DHCP, so automatic IP assignment via local router
 	- `IPv6AcceptRA=true` is to allow IPv6
-	- (for rest see official docs, linked at the end of this section)
-- in short - this config is for obtaining IP address automatically via DHCP service, including working IPv6
-- you can also use `DHCP=false` then in `[Network]` section set the static `Address=x.x.x.x/24` and `Gateway=x.x.x.x` (using actual valid, available and free IP for Address and valid gateway for, well, gateway)
+	- (for rest see official docs, linked at the end of full guide file)
+- In short - this config is for obtaining IP address automatically via DHCP service, including working IPv6
+- You can also use `DHCP=false` then in `[Network]` section set the static `Address=x.x.x.x/24` and `Gateway=x.x.x.x` (using actual valid, available and free IP for Address and valid gateway for, well, gateway), see full guide file for details
 
-- save and close the file
+- Save and close the file
 ```
 CTRL+X
 	Y
 ```
-- restart the networking service
+- Restart the networking service
 `systemctl restart systemd-networkd`
-- and make sure it's enabled for future auto-start on WSL start
+- And make sure it's enabled for future auto-start on WSL start
 `systemctl enable systemd-networkd`
-- check if you've got IP now
+- Check if you've got IP now
 `ip a`
-- you should see both IPv4 and IPv6 addresses on `eth0` interface !
+- You should see both IPv4 and IPv6 addresses on `eth0` interface !
 ```
 	6: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
 		link/ether 5c:bb:f6:9e:ee:fa brd ff:ff:ff:ff:ff:ff
@@ -168,38 +170,38 @@ CTRL+X
 
 One more thing we need to configure is DNS resolving, as at this point you can only ping an IP eg. `8.8.8.8` but not FQDN like `google.com`:
 
-- we've already added `generateResolvConf = false` to `wsl.conf` telling WSL to NOT generate `resolv.conf` anymore, so now we have to generate it manually
-- edit `resolv.conf` with `nano`
+- We've already added `generateResolvConf = false` to `wsl.conf` telling WSL to NOT generate `resolv.conf` anymore, so now we have to generate it manually
+- Edit `resolv.conf` with `nano`
 `nano /etc/resolv.conf`
-- contents
+- Contents
 `nameserver 8.8.8.8`
-- save and close file
+- Save and close file
 ```
 CTRL+X
 	Y
 ```
-- restart service
+- Restart service
 `systemctl restart systemd-resolved.service`
-- and make sure it is enabled for future auto-start
+- And make sure it is enabled for future auto-start
 `systemctl enable systemd-resolved.service`
-- test resolving by simply pinging some FQDN, eg.
+- Test resolving by simply pinging some FQDN, eg.
 `ping google.com`
 
 # Final test - reboot
 Final test is to see if everything works after restart of everything - WSL and the whole host PC!
 
-- shutdown WSL instance
+- Shutdown WSL instance
 ```
 exit
 exit
 wsl --shutdown
 ```
-- reboot your whole PC
+- Reboot your whole PC
 - NOTE: you may need to start your WiFi or connect that physical cable to adapter of choice
 	- I had that issue exactly as I have multiple adapters on my PC (any I keep forgetting to connect them when needed)
-- start WSL instance, eg.
+- Start WSL instance, eg.
 `wsl -d Ubuntu`
-- check from inside WSL with:
+- Check from inside WSL with:
 ```
 ip a
 networkctl status eth0
@@ -209,13 +211,13 @@ ping google.com
 
 # WSL distro updating of OS - Ubuntu
 
-- now check for and run updates in WSL distro
+- Now check for and run updates in WSL distro
 	- btw "sudo" to get root rights (this is equivalent of Run as Admin in Windows)
 ```
 sudo su
 	<password>
 ```
-- then run apt commands to update and upgrade everything
+- Then run apt commands to update and upgrade everything
 ```
 apt update
 apt upgrade
@@ -228,22 +230,22 @@ apt full-upgrade
 Here we will install Apache server, enable service with systemd, reboot PC, and see if it's still working once WSL distro starts.
 This confirms working networking, working incoming networking, working networking even after reboot, "stability" of `resolv.conf`, and working `systemd` services.
 
-- command to install server, make sure you're still running as sudo (root), if not - you'll need to repeat `sudo su` as before
+- Command to install server, make sure you're still running as sudo (root), if not - you'll need to repeat `sudo su` as before then run the install command: 
 `apt install apache2`
-- restart and check status of apache2 service
+- Restart and check status of apache2 service
 ```
 service apache2 restart
 service apache2 status
 ```
-- check if apache2 is listening on ports as you expected
+- Check if apache2 is listening on ports as you'd expect with command :
 `lsof -i -P -n | grep LISTEN`
-- you can now also setup Apache to always run by enabling the service autostart, this is also good test if `systemd` is actually working
+- You can now also setup Apache to always run by enabling the service autostart, this is also good test if `systemd` is actually working, command is :
 `sudo systemctl enable apache2`
 
-### Check if webpage is available from 3rd PC/smarphone by trying http://x.x.x.x/ (your WSL IP) in browser, and if it is, shutdown WSL, reboot PC, start WSL distro (only start it!), and check that webpage again - it should work!
+### Check if webpage is available from 3rd PC/smarphone by trying http://x.x.x.x/ (your WSL IP) in browser, and if it is, shutdown WSL, reboot PC, start WSL distro (only start it!), and check that webpage again from 3rd device - it should still work, without manual start! Also note that using either IP or localhost should work from Windows host PC.
 
-- if you don't need/want to keep Apache you can remove it now as well
-- to remove apache installation run:
+- If you don't need/want to keep Apache you can remove it now as well
+- To remove Apache installation run:
 ```
 apt remove apache2
 	y
