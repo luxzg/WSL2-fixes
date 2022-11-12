@@ -114,7 +114,7 @@ apt-get full-upgrade -y
 ```
 
 ```
-apt-get install apache2
+apt-get install apache2 -y
 systemctl enable apache2
 systemctl restart apache2
 exit
