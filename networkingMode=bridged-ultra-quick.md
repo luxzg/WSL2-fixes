@@ -7,6 +7,14 @@ wsl.exe --install Ubuntu
 ```
 
 ```
+Enter new UNIX username: lux
+New password:
+Retype new password:
+passwd: password updated successfully
+Installation successful!
+```
+
+```
 lsb_release -a
 sudo nano /etc/wsl.conf
 ```
