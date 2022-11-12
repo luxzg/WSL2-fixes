@@ -121,4 +121,22 @@ exit
 exit
 ```
 
-`wsl.exe --shutdown`
+```
+wsl.exe --shutdown
+wsl.exe -d Ubuntu
+```
+
+```
+sudo su
+apt-get install x11-apps -y
+xeyes &
+xcalc &
+```
+
+```
+apt-get install gufw -y
+gufw &
+nm-connection-editor &
+exit
+exit
+```
