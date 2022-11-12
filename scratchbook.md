@@ -37,3 +37,13 @@ Links:
 Links:
 
 - https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-20-04
+
+### NetworkManager & GUFW - GUI
+
+- GUI frontends for NetworkManager (network settings)
+- GUI frontend for UFW (firewall)
+
+Links:
+
+- http://gufw.org/
+- https://askubuntu.com/questions/174381/openning-networkmanagers-edit-connections-window-from-terminal
