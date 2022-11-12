@@ -136,6 +136,7 @@ xcalc &
 ```
 apt-get install gufw -y
 gufw &
+apt-get install network-manager-gnome -y
 nm-connection-editor &
 exit
 exit
