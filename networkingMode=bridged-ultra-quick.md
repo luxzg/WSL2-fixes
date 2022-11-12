@@ -38,13 +38,22 @@ wsl.exe -d Ubuntu
 ```
 
 ```
-sudo nano /etc/resolv.conf
+sudo su
+nano /etc/resolv.conf
+```
+
+```
+nameserver 8.8.8.8
+```
+
+```
 systemctl restart systemd-networkd
 systemctl enable systemd-networkd
 systemctl restart systemd-resolved.service
 systemctl enable systemd-resolved.service
 ip a
 ping www.google.com
+exit
 exit
 ```
 
@@ -59,4 +68,7 @@ ping google.com
 ping www.google.com
 ping www.bing.com
 sudo su
+apt-get update
+apt-get upgrade
+apt-get full-upgrade
 ```
