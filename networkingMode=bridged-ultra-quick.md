@@ -133,6 +133,7 @@ xeyes &
 xcalc &
 ```
 
+# DO NOT do these - they break X11
 ```
 apt-get install gufw -y
 gufw &
