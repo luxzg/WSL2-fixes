@@ -36,6 +36,37 @@ Gateway=192.168.0.1
 wsl.exe --shutdown
 cd ~
 .\.wslconfig
+```
+
+```
+# Settings apply across all Linux distros running on WSL 2
+[wsl2]
+
+# Bridged networking
+networkingMode=bridged
+vmSwitch=WSL_external
+dhcp=false
+macAddress=5c:bb:f6:9e:ee:55
+ipv6=true
+
+# Limits VM memory to use no more than 4 GB, this can be set as whole numbers using GB or MB
+memory=4GB 
+
+# Sets the VM to use two virtual processors
+processors=2
+
+# Turn on/off default connection to bind WSL 2 localhost to Windows localhost ; default is true
+localhostforwarding=true
+
+# Turns on/off output console showing contents of dmesg when opening a WSL 2 distro for debugging ; default is false
+#debugConsole=true
+debugConsole=false
+
+# Turns on/off running GUI apps ; default is true
+guiApplications=true
+```
+
+```
 wsl.exe -d Ubuntu
 ```
 
