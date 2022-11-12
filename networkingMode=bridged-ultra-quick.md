@@ -131,14 +131,5 @@ sudo su
 apt-get install x11-apps -y
 xeyes &
 xcalc &
-```
-
-# DO NOT do these - they break X11
-```
-apt-get install gufw -y
-gufw &
-apt-get install network-manager-gnome -y
-nm-connection-editor &
-exit
 exit
 ```
