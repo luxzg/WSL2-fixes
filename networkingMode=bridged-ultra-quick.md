@@ -6,8 +6,10 @@ wsl.exe --list --online
 wsl.exe --install Ubuntu
 ```
 
-`lsb_release -a`
-`sudo nano /etc/wsl.conf`
+```
+lsb_release -a
+sudo nano /etc/wsl.conf
+```
 
 ```
 [boot]
