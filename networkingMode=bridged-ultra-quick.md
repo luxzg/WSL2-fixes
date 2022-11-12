@@ -67,7 +67,6 @@ processors=2
 localhostforwarding=true
 
 # Turns on/off output console showing contents of dmesg when opening a WSL 2 distro for debugging ; default is false
-#debugConsole=true
 debugConsole=false
 
 # Turns on/off running GUI apps ; default is true
@@ -110,6 +109,6 @@ ping www.google.com
 ping www.bing.com
 sudo su
 apt-get update
-apt-get upgrade
-apt-get full-upgrade
+apt-get upgrade -y
+apt-get full-upgrade -y
 ```
