@@ -1,5 +1,16 @@
 # To remember stuff I need sometimes on WSL
 
+### Reinstall Ubuntu distro without download
+
+- wsl --unregister Ubuntu
+- wsl.exe --install Ubuntu
+- will start new instance:
+  - Enter new UNIX username:
+  - New password:
+  - Retype new password:
+  - passwd: password updated successfully
+  - Installation successful!
+
 ### nmap + GUI
 
 - `apt install nmap`
