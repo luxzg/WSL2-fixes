@@ -115,6 +115,7 @@ To get latest updates and features, including virtual switch bridging you NEED t
 
 # Post-install steps
 
+- In elevated PowerShell / Terminal prompt (run as Administrator)
 - Update WSL installation (just in case):
 `wsl --update`
 - And get current versions:
