@@ -5,7 +5,7 @@ For full tutorial please go here: https://github.com/luxzg/WSL2-fixes/blob/maste
 
 If you haven't EVER setup WSL2 with systemd and bridged networking - please read full file.
 
-If you need more information about commands and configurations mentioned in this guide - pleas read full file.
+If you need more information about commands and configurations mentioned in this guide - please read full file.
 
 # Install WSL 2 Preview
 To get latest updates and features, including virtual switch bridging you NEED the latest Preview version and HAVE TO get it from Microsoft Store
@@ -17,7 +17,7 @@ To get latest updates and features, including virtual switch bridging you NEED t
 
 # Install WSL distro, this is for Ubuntu
 
-- Install WSL2 distro according to your preferences, eg Ubuntu from Microsoft Store:
+- Install WSL2 distro according to your preferences, eg. Ubuntu from Microsoft Store:
 	- https://www.microsoft.com/store/productId/9PDXGNCFSCZV
 	- Store app link: ms-windows-store://pdp/?productid=9PDXGNCFSCZV
 	- Again just click GET, and then be patient, it's ~670 MB download
@@ -81,7 +81,7 @@ ipv6=true
 `wsl -d Ubuntu`
 
 # systemd setup and check
-`systemd` is default in many distributions right now, so we'd want to use that too to be as close "to the real thing" as possible.
+`systemd` is the default init system in many distributions right now, so we'd want to use that too to be as close "to the real thing" as possible.
 
 - From inside WSL prompt we need to configure `wsl.conf` file for `systemd` usage, so edit the file like this:
 `sudo nano /etc/wsl.conf`
@@ -180,7 +180,7 @@ systemctl enable systemd-networkd
 
 One more thing we need to configure is DNS resolving, as at this point you can only ping an IP eg. `8.8.8.8` but not FQDN like `google.com`:
 
-- We've already added `generateResolvConf = false` to `wsl.conf` telling WSL to NOT generate `resolv.conf` anymore, so now we have to generate it manually
+- We've already added `generateResolvConf = false` to `wsl.conf` telling WSL to **NOT** generate `resolv.conf` anymore, so now we have to generate it manually
 - Edit `resolv.conf` with `nano` editor:
 ```
 nano /etc/resolv.conf
