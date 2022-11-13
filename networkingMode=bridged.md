@@ -115,9 +115,9 @@ To get latest updates and features, including virtual switch bridging you NEED t
 
 # Post-install steps
 
-- Update WSL installation
+- Update WSL installation (just in case):
 `wsl --update`
-- And get current versions
+- And get current versions:
 `wsl --version`
 - Will respond with something like this:
 ```
@@ -130,7 +130,7 @@ DXCore version: 10.0.25131.1002-220531-1700.rs-onecore-base2-hyp
 Windows version: 10.0.22621.675
 ```
 - NOTE! If `--version` does not work you probably DO NOT have Preview version from Microsoft Store installed !! Go back and fix that before you continue!
-- Close WSL for now
+- Close WSL for now:
 `wsl --shutdown`
 
 # Creating Virtual Switch in Hyper-V Manager
@@ -156,7 +156,7 @@ New-Item .wslconfig
 .\.wslconfig
 ```
 - Select your choice of text editor to open file
-- If you forgot what was your virtual switch named run this in PowerShell
+- If you forgot what was your virtual switch named run this in PowerShell:
 ```
 Get-VMSwitch -SwitchType External | Select Name, SwitchType, NetAdapterInterfaceDescription, AllowManagementOS
 ```
@@ -177,9 +177,7 @@ WSL_external   External Killer(R) Wi-Fi 6 AX1650x 160MHz Wireless Network Adapte
 networkingMode=bridged
 vmSwitch=WSL_external
 ```
-- To clarify:
-`vmSwitch=`
-- Defines connection to External Virtual Switch from Hyper-V and needs to be set exactly same as the name of virtual (External) switch that we've set up in Virtusl Switch Manager (see `Get-VMSwitch` output above)
+- To clarify: `vmSwitch=` line defines connection to External Virtual Switch from Hyper-V and needs to be set exactly same as the name of virtual (External) switch that we've set up in Virtusl Switch Manager (see `Get-VMSwitch` output above)
 - Also more options were added in later versions, but we DO NOT use them for now:
 ```
  	macAddress
@@ -198,18 +196,18 @@ vmSwitch=WSL_external
 - Change the name according to what you've installed from Microsoft Store earlier, in this case:
 	- Start menu -> Ubuntu
 - It will open first time GUI setup so run with it
-- Pick language, Next, enter your name, username and password (2x), Next, Continue
+- Pick language, Next, enter your name, username and password (2x)
 	- Note: I had issues because apparently you can't use non latin characters in your name
-- Continue, Apply, and so on, Finish
+- Keep pressing Continue / Next / Setup, and so on, ... and Finish
 
 # Starting and updating your WSL2 distro
 
 - In Terminal / PowerShell
-- Listing all distros
+- Listing all distros:
 `wsl --list -v`
-- Updating distros
+- Updating WSL if you haven't already:
 `wsl --update`
-- Starting distros (eg. start Ubuntu)
+- Starting distros (eg. start Ubuntu):
 `wsl -d Ubuntu`
 
 # Checking networking
@@ -309,7 +307,7 @@ xcalc &
 
 - The following is nothing dangerous, we're just installing web server and opening port 80 to it, and if you want we'll also remove it at the end
 - To confirm networking works for incoming traffic we will install a web server (Apache) and try to access it from an outside device eg. from mobile phone on the same WiFi, or another PC in the same LAN
-- Command to install server, make sure you're still running as sudo (root) if not you'll need to repeat `sudo su` as before, then run this:
+- Command to install server, make sure you're still running as sudo (root), if not - you'll need to repeat `sudo su` as before, then run the install command:
 ```
 apt install apache2
 	y
@@ -322,7 +320,7 @@ service apache2 status
 - Allow listening on port 80 through `iptables`
 	- If you use other port change accordingly
 `iptables -I INPUT -p tcp -m tcp --dport 80 -j ACCEPT`
-- Check if `apache2` is listening on the ports as you'd expect:
+- Check if `apache2` is listening on the ports as you'd expect with command:
 ```
 lsof -i -P -n | grep LISTEN
 ```
@@ -330,12 +328,17 @@ lsof -i -P -n | grep LISTEN
 	- http://192.168.0.33
 - Make sure you enter IP that's shown in your WSL distro's `ip a` command output!
 - It should show a web page saying something like `Apache2 Default Page ... It works!` etc.
+- Also note that using either IP or localhost should work from Windows host PC.
 - Apache will NOT run automatically on distro reboot (shutdown and re-run) so if you want to continue using Apache you'll need to run the service again manually eg.
-`sudo service apache2 start`
-- If you have setup `systemd` (see optional steps below, after references and links) you can also setup Apache to always run by enabling the service autostart, this is also good test if `systemd` is actually working:
-`sudo systemctl enable apache2`
+```
+sudo service apache2 start
+```
+- If you have setup `systemd` (see optional steps below, after references and links) you can now also setup Apache to always run by enabling the service autostart, this is also good test if `systemd` is actually working, command is:
+```
+sudo systemctl enable apache2
+```
 - But everything else is outside of this tutorial, and if you don't need/want Apache you can remove it now as well
-- To remove Apache installation run:
+- If you don't need/want to keep Apache you can remove it now as well by running:
 ```
 apt remove apache2
 	y
@@ -421,7 +424,7 @@ systemd=true
 ```
 CTRL+X to close, and Y to confirm save over same filename
 ```
-- Shut down WSL instance by running these commanda inside active WSL distro's prompt:
+- Shut down WSL instance by running these commands inside active WSL distro's prompt:
 ```
 exit
 wsl --shutdown
@@ -431,6 +434,8 @@ wsl --shutdown
 `wsl -d Ubuntu`
 - We can now check if `systemd` is working by running this in the WSL prompt:
 `systemctl list-unit-files --type=service`
+
+- Note: there have been reports that enabling `systemd` on existing WSL2 instance can make it stop responding altogether, but simple fix is to reboot the whole host PC, doing just WSL restart wasn't enough, but after reboot everything worked as expected
 
 With `systemd` enabled you should have networking working as earlier.
 But if you want to step away from WSL's helping hand completely, have full DHCP / IPv4 / IPv6 control from inside Linux distro, and so on - then we need a few more tweaks. Check next section!
@@ -465,7 +470,7 @@ ipv6=true
 `wsl -d Ubuntu`
 - Get root:
 `sudo su`
-- Confirm that you've just lost your networking:
+- Confirm that you don't have any networking:
 `ip a`
 - You will see something like this, `eth0` with MAC but no IP address assigned:
 ```
@@ -549,7 +554,7 @@ CTRL+X
 	Y
 ```
 - We've added `generateResolvConf = false` to tell WSL to **NOT** generate `resolv.conf` anymore, so now we have to generate it manually
-- Edit `resolv.conf` with `nano` :
+- Edit `resolv.conf` with `nano` editor:
 ```
 nano /etc/resolv.conf
 ```
@@ -562,7 +567,7 @@ nameserver 8.8.8.8
 CTRL+X
 	Y
 ```
-- Restart service:
+- Restart service by running:
 ```
 systemctl restart systemd-resolved.service
 ```
@@ -612,7 +617,7 @@ systemctl restart systemd-networkd
 
 Final test is to see if everything works after restart of everything - WSL and the whole Windows host PC!
 
-- Shutdown WSL instance
+- Shutdown WSL instance:
 ```
 exit
 exit
