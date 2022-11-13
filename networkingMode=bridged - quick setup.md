@@ -212,12 +212,12 @@ ping google.com
 # WSL distro updating of OS - Ubuntu
 
 - Now check for and run updates in WSL distro
-	- btw `sudo` to get root rights (this is equivalent of Run as Admin in Windows)
+	- BTW `sudo` to get root rights (this is equivalent of Run as Admin in Windows)
 ```
 sudo su
 	<password>
 ```
-- Then run apt commands to update and upgrade everything:
+- Then run `apt` commands to update and upgrade everything:
 ```
 apt update
 apt upgrade
@@ -232,17 +232,17 @@ This confirms working networking, working incoming networking, working networkin
 
 - Command to install server, make sure you're still running as sudo (root), if not - you'll need to repeat `sudo su` as before then run the install command: 
 `apt install apache2`
-- Restart and check status of apache2 service:
+- Restart and check status of `apache2` service:
 ```
 service apache2 restart
 service apache2 status
 ```
-- Check if apache2 is listening on ports as you'd expect with command:
+- Check if `apache2` is listening on ports as you'd expect with command:
 `lsof -i -P -n | grep LISTEN`
 - You can now also setup Apache to always run by enabling the service autostart, this is also good test if `systemd` is actually working, command is:
 `sudo systemctl enable apache2`
 
-### Check if webpage is available from 3rd PC/smarphone by trying http://x.x.x.x/ (your WSL IP) in browser, and if it is, shutdown WSL, reboot PC, start WSL distro (only start it!), and check that webpage again from 3rd device - it should still work, without manual start! Also note that using either IP or localhost should work from Windows host PC.
+### Check if webpage is available from 3rd PC/smarphone on your local network by trying `http://x.x.x.x/` (your WSL IP) in browser, and if it is, shutdown WSL, reboot PC, start WSL distro (only start it!), and check that webpage again from 3rd device - it should still work, without manual start! Also note that using either IP or localhost should work from Windows host PC.
 
 - If you don't need/want to keep Apache you can remove it now as well
 - To remove Apache installation run:
