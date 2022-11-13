@@ -54,7 +54,7 @@ ipv6=true
 - See full guide file for optional lines like `macAddress=` or in depth explanation of other options
 - Save and close the file
 
-### VERY IMPORTANT !!! I have seen several posts that made typos in config, if the tutorial "doesn't work" please make sure you check wslconfig and use COPY PASTE !!!
+### VERY IMPORTANT !!! I have seen several posts that made typos in config, if the tutorial "doesn't work" please make sure you check `.wslconfig` and use COPY PASTE !!!
 
 # WSL distro first run
 
@@ -88,7 +88,7 @@ systemd=true
 [network]
 generateResolvConf = false
 ```
-- Exit nano editor and save the file:
+- Exit `nano` editor and save the file:
 `CTRL+X to close, and Y to confirm save over same filename`
 - Shut down WSL instance by running these commands inside active WSL distro prompt:
 ```
@@ -101,7 +101,7 @@ wsl --shutdown
 - We can check if `systemd` is working by running this in the WSL prompt:
 `systemctl list-unit-files --type=service`
 
-- Note: there have been reports that enabling systemd on existing WSL2 instance can make it stop responding altogether, but simple fix is to reboot the whole host PC, doing just WSL restart wasn't enough, but after reboot everything worked as expected
+- Note: there have been reports that enabling `systemd` on existing WSL2 instance can make it stop responding altogether, but simple fix is to reboot the whole host PC, doing just WSL restart wasn't enough, but after reboot everything worked as expected
 
 # Completely client-side networking with systemd related services
 
