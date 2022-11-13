@@ -1,6 +1,6 @@
-# SHORT COMMAND LIST
-This is WSL2 bridging in really short, as a reference for those that do it repeatedly, and don't want to ready everything.
-This is version for those that already have Hyper-V, vSwitch, and want Ubuntu distro with systemd networking.
+# SHORT WSL2 BRIDGING AND NETWORKING REFERENCE
+This is WSL2 bridging in really short, as a reference for those that do it more often, and don't want to ready everything.
+This is version for those that already have Hyper-V, vSwitch, and want Ubuntu distro with `systemd` networking.
 For full tutorial please go here: https://github.com/luxzg/WSL2-fixes/blob/master/networkingMode%3Dbridged.md
 
 If you haven't EVER setup WSL2 with systemd and bridged networking - please read full file.
