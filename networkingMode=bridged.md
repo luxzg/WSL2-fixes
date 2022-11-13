@@ -6,7 +6,7 @@ OK folks, after many years watching WSL space, then another year watching WSL2 o
 Since I see many questions I've decided to write an expanded tutorial for this thread.
 Please note that this is detailed guide, and it is long and going through it may be bit slower. There are now also a "quick" and "ultra-quick" versions available here : https://github.com/luxzg/WSL2-fixes
 But it is very recommended to at least read through this full guide once to get the full understanding of the process and available options and settings.
-I will do my best to keep both of these guides up to date according to new findings in the original GitHub issue thread (4150).
+I will do my best to keep all of these guides up to date according to new findings in the original GitHub issue thread (4150).
 
 # REQUIREMENTS
 
@@ -27,7 +27,7 @@ I will do my best to keep both of these guides up to date according to new findi
 - If you've been stuck on W10 (like me) for a year waiting for something to happen - stop waiting!
 - Not to promote any external tools, but MS did it to themselves:
  	- https://pureinfotech.com/rufus-create-bootable-windows-11-22h2-usb/
-- This link will tell you where to get Rufus, how to use it to download Windows 11 ISO, how to create bootable USB stick, and how to remove the 4GB, Secure Boot, TPM and CPU model limitations (see the section about unsupported hardware)
+- This link will tell you where to get Rufus, how to use it to download Windows 11 ISO, how to create bootable USB stick, and how to remove the 4GB, Secure Boot, TPM and CPU model limitations (see their section about unsupported hardware)
 - Then you can use this USB to either boot fresh install, or run the installer from that USB from inside Windows 10 for an in-place upgrade
 - There's some more work for when language of W10 and W11 installation differ, if you stumble upon that msg me, those instructions are beyond the scope of this overal tutorial
 
@@ -40,7 +40,7 @@ This section is large, so just be patient and follow steps
 - This functionality is no longer limited to Insider builds, I am running Windows 11 Pro 22H2 (stable) and this tutorial was made on that version
 
 ### OPTIONAL: Install and use Microsoft Terminal
-I did this tutorial using Terminal, but in reality all commands run via usual cmd or PowerShell so if you want you may skip this, just make sure to use PowerShell prompt instead for parts that use PowerShell commandlets
+I did this tutorial using Terminal, but in reality all commands can be run via usual cmd or PowerShell so if you want you may skip this, just make sure to use PowerShell prompt instead for parts that use PowerShell commandlets
 
 - Official link to Terminal on Microsoft Store, just click and install:
 https://aka.ms/terminal
@@ -65,7 +65,9 @@ Open cmd or PowerShell or Terminal as Administrator (eg right click on Start but
 	Do you want to restart the computer now? (Y/N)
 ```
 - Restart your PC
-`Y`
+```
+Y
+```
 
 # OPTIONAL : updating WinGet and PowerShell to latest stable versions
 This is really optional, as Windows 11 is shipped with PowerShell and winget by default and both are relatively recent if you've used Windows Update to the fullest (W11 22H2)
@@ -73,7 +75,9 @@ This is really optional, as Windows 11 is shipped with PowerShell and winget by 
 - From elevated Terminal (Admin) prompt:
 	- update all packages using winget
 	- !! WARNING !! : this will update other applications as well (!!) so you may want skip this command if you want to keep any of your existing apps on current versions
-`winget upgrade --all`
+```
+winget upgrade --all
+```
 - Check current PowerShell version
 `(Get-Host).Version`
 - Find PowerShell in winget repository
@@ -153,7 +157,9 @@ New-Item .wslconfig
 ```
 - Select your choice of text editor to open file
 - If you forgot what was your virtual switch named run this in PowerShell
-`Get-VMSwitch -SwitchType External`
+```
+Get-VMSwitch -SwitchType External | Select Name, SwitchType, NetAdapterInterfaceDescription, AllowManagementOS
+```
 - Example output from my PC:
 ```
 Get-VMSwitch -SwitchType External | Select Name, SwitchType, NetAdapterInterfaceDescription, AllowManagementOS
@@ -173,7 +179,7 @@ vmSwitch=WSL_external
 ```
 - To clarify:
 `vmSwitch=`
-- Defines connection to External Virtual Switch from Hyper-V and needs name of same switch
+- Defines connection to External Virtual Switch from Hyper-V and needs to be set exactly same as the name of virtual (External) switch that we've set up in Virtusl Switch Manager (see `Get-VMSwitch` output above)
 - Also more options were added in later versions, but we DO NOT use them for now:
 ```
  	macAddress
@@ -188,7 +194,7 @@ vmSwitch=WSL_external
 
 # WSL distro first run
 
-- Now you can run and install your distribution
+- Now you can run your distribution for the first time
 - Change the name according to what you've installed from Microsoft Store earlier, in this case:
 	- Start menu -> Ubuntu
 - It will open first time GUI setup so run with it
@@ -256,22 +262,13 @@ ip a
 
 # WSL distro updating of OS - Ubuntu
 
-- You will want to update your distro next, for Ubuntu this is the usual way:
-```
-sudo apt update
-sudo apt upgrade
-	y
-exit
-```
-- NOTE: in case update/upgrade failed, you may need to connect your WiFi or connect that physical cable to adapter of choice
-	- I had that issue exactly as I have multiple adapters on my PC, and I keep forgetting it
-- Now check for and run updates again in WSL
-	- Btw "sudo" to get root rights (this is equivalent of Run as Admin in Windows)
+- You will want to update your distro next
+- First we need to get `root` rights using `sudo` (this is the equivalent of "Run as Admin" in Windows)
 ```
 sudo su
 	<password>
 ```
-- Then run apt commands to update and upgrade everything
+- Then run these `apt` commands to update and upgrade everything in WSL OS:
 ```
 apt update
 apt upgrade
@@ -279,8 +276,12 @@ apt upgrade
 apt full-upgrade
 	y
 ```
-- Checking Ubuntu version
-`lsb_release -a`
+- NOTE: in case update/upgrade fails, you may need to re-connect your WiFi or connect that physical cable to the network adapter of your choice, then try again
+	- I kept having that exact issue as I have multiple adapters on my PC, and I keep forgetting my WiFi doesn't auto-connect
+- Checking Ubuntu version after upgrades
+```
+lsb_release -a
+```
 - Using default "Ubuntu" Store distro I get this at the moment, fully updated and so on
 ```
 	root@DESKTOP-123456:/mnt/c/Users/myuser# lsb_release -a
@@ -293,9 +294,11 @@ apt full-upgrade
 
 # WSL GUI apps
 
-- We can also test some simple GUI apps for WSL my installing these:
-`apt install x11-apps`
-- Test them by running commands:
+- We can also test some simple GUI apps for WSL by installing these:
+```
+apt install x11-apps
+```
+- Test them by running these commands:
 ```
 xeyes &
 xcalc &
@@ -306,7 +309,7 @@ xcalc &
 
 - The following is nothing dangerous, we're just installing web server and opening port 80 to it, and if you want we'll also remove it at the end
 - To confirm networking works for incoming traffic we will install a web server (Apache) and try to access it from an outside device eg. from mobile phone on the same WiFi, or another PC in the same LAN
-- Command to install server, make sure you're still running as sudo (root) if not you'll need to repeat `sudo su` as before, then this:
+- Command to install server, make sure you're still running as sudo (root) if not you'll need to repeat `sudo su` as before, then run this:
 ```
 apt install apache2
 	y
@@ -320,14 +323,16 @@ service apache2 status
 	- If you use other port change accordingly
 `iptables -I INPUT -p tcp -m tcp --dport 80 -j ACCEPT`
 - Check if `apache2` is listening on the ports as you'd expect:
-`lsof -i -P -n | grep LISTEN`
+```
+lsof -i -P -n | grep LISTEN
+```
 - And try it out! Using browser from 3rd device in your network open URL with your IP, eg.:
 	- http://192.168.0.33
-- Make sure you enter IP that's shown in your WSL distro's `ip a` command!
-- It should show a web page saying something like "Apache2 Default Page ... It works!" etc.
-- Apache will NOT run automatically on distro reboot (shutdown and re-run) so if you want to continue using Apache you'll need to run the service again eg.
+- Make sure you enter IP that's shown in your WSL distro's `ip a` command output!
+- It should show a web page saying something like `Apache2 Default Page ... It works!` etc.
+- Apache will NOT run automatically on distro reboot (shutdown and re-run) so if you want to continue using Apache you'll need to run the service again manually eg.
 `sudo service apache2 start`
-- If you have setup `systemd` (optional, see optional steps below after references and links) you can also setup Apache to always run by enabling the service autostart, this is also good test if `systemd` is actually working:
+- If you have setup `systemd` (see optional steps below, after references and links) you can also setup Apache to always run by enabling the service autostart, this is also good test if `systemd` is actually working:
 `sudo systemctl enable apache2`
 - But everything else is outside of this tutorial, and if you don't need/want Apache you can remove it now as well
 - To remove Apache installation run:
@@ -335,8 +340,10 @@ service apache2 status
 apt remove apache2
 	y
 ```
-- To remove `iptables` entry run same as before except `-D` (`-I` = insert vs. `-D` = delete)
-`iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT`
+- To remove `iptables` entry run simmilar command as before except replacing `-I` (insert) to `-D` (delete)
+```
+iptables -D INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+```
 
 # Conclusion
 ### THAT'S IT FOLKS!
@@ -344,16 +351,16 @@ apt remove apache2
 - You have Ubuntu in WSL2, proper networking, in and out of VM
 - You have DHCP from your router (or corporate network)
 - You have local WSLg GUI apps if needed working fine, as intended
-- You have localhost access from your host Windows PC if you still need it
+- You have `localhost` access from your host Windows PC if you still need it
 
 # NOTES
 
-- If you use VPN - you can now start VPN directly from your WSL distro
-- If you often switch between multiple network adapters eg. WiFi and LAN you could create `New-NetSwitchTeam`, but I've found in the meantime that it's way easier to just open Virtual Switch Manager from Hyper-V Manager, and edit the bridge network by selecting currently active physical network adapter from the dropdown menu under `External network` and `Apply` the change, it takes a few seconds only
+- If you use VPN - you can now start VPN session directly from your WSL distro
+- If you often switch between multiple network adapters, eg. WiFi and LAN on your laptop, you could create `New-NetSwitchTeam`, but I've since found that it's way easier to just open `Virtual Switch Manager` from `Hyper-V Manager`, and edit the bridge network by selecting currently active physical network adapter from the dropdown menu under `External network` and `Apply` the change, it takes a few seconds only, and works without restarting WSL instance
 - If you are still stuck on Windows 10 or 11 on Home version please go get a Windows 11 Pro key for <10$
 
 # References and links:
-### (I have collected links to almost every command in this tutorial, not counting the testing section, if you want to learn more start reading!)
+### (I have collected links to almost every command in this tutorial, not counting the testing section, if you want to learn more - start reading!)
 
 - GitHub issue asking for Hyper-V External adapters on WSL 2:
 	- https://github.com/microsoft/WSL/issues/5835
@@ -397,9 +404,7 @@ apt remove apache2
 - Creating bootable USB stick with Rufus and circumventing Windows 11 restrictions:
 	- https://pureinfotech.com/rufus-create-bootable-windows-11-22h2-usb/
 
-
-
-### The following 2 sections are describing how to enable and configure `systemd` and related networking services.
+### The following (optional) sections are describing how to enable and configure `systemd` and related networking services.
 
 # OPTIONAL: systemd setup and check
 `systemd` is the default init system in many distributions right now, so we'd want to use that too to be as close "to the real thing" as possible.
@@ -413,27 +418,30 @@ apt remove apache2
 systemd=true
 ```
 - Exit `nano` editor and save the file:
-`CTRL+X to close, and Y to confirm save over same filename`
+```
+CTRL+X to close, and Y to confirm save over same filename
+```
 - Shut down WSL instance by running these commanda inside active WSL distro's prompt:
 ```
-exit
 exit
 wsl --shutdown
 ```
 
-- Start your WSL instance again, eg.
+- Start your WSL instance again, eg.:
 `wsl -d Ubuntu`
 - We can now check if `systemd` is working by running this in the WSL prompt:
 `systemctl list-unit-files --type=service`
 
 With `systemd` enabled you should have networking working as earlier.
-But if you want to step away from WSL's helping hand completely, have full DHCP / IP v4 / IP v6 controll from inside Linux distro, and so on - then we need few more tweaks. Check next section!
+But if you want to step away from WSL's helping hand completely, have full DHCP / IPv4 / IPv6 control from inside Linux distro, and so on - then we need a few more tweaks. Check next section!
 
 # Completely client-side networking with systemd related services
 
 - Start Terminal or PowerShell in elevated prompt as before
-- Stop WSL
-`wsl --shutdown`
+- Stop WSL:
+```
+wsl --shutdown
+```
 - Edit `.wslconfig` file:
 ```
 cd ~
@@ -447,7 +455,7 @@ vmSwitch=WSL_external
 dhcp=false
 ipv6=true
 ```
-- `dhcp=false` will disable WSL "helper" (WSL’s own DHCP service) that usually assigns IP address, and will let the OS inside WSL instance do all the work
+- `dhcp=false` will disable WSL "helper" (its own DHCP service helper) that usually assigns IP address, and will let the OS inside WSL instance do all the work
 - `ipv6=true` will explicitly force IPv6 which helps with `localhost` communication for apps that don't setup listening ports specifically for `0.0.0.0:<port>`
 - Save the `.wslconfig` file and exit text editor
 
@@ -461,14 +469,14 @@ ipv6=true
 `ip a`
 - You will see something like this, `eth0` with MAC but no IP address assigned:
 ```
-	6: eth0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
-		link/ether 5c:bb:f6:9e:ee:fa brd ff:ff:ff:ff:ff:ff
+6: eth0: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+	link/ether 5c:bb:f6:9e:ee:fa brd ff:ff:ff:ff:ff:ff
 ```
 - To fix this go to directory in which Ubuntu keeps networking configs (if you use different OS you'll need to dig deeper, see reference links at the end of this section):
 `cd /lib/systemd/network/`
 - Create and edit a new file:
 `nano wsl_external.network`
-- Contents of the file (use copy/paste):
+- Contents of the file (use copy/paste to avoid mistakes):
 ```
 [Match]
 Name=eth0
@@ -488,10 +496,10 @@ UseDomains=true
 ```
 - Explanation:
 	- `eth0` is name of the interface
-	- `Description` is whatever you want it to be
-	- `DHCP=true` tells the networking stack to use DHCP, so automatic IP assignment via local router
+	- `Description` is whatever you want it to be (doesn't have to match any existing names)
+	- `DHCP=true` tells the networking stack to use DHCP, allowing automatic IP assignment via local router
 	- `IPv6AcceptRA=true` is to allow IPv6
-	- (For rest see official docs, linked at the end of this section)
+	- (For the rest see official docs, linked at the end of this section)
 - In short - this config is for obtaining IP address automatically via DHCP service, including working IPv6
 
 - Save and close the file
@@ -499,20 +507,24 @@ UseDomains=true
 CTRL+X
 	Y
 ```
-- Restart the networking service
-`systemctl restart systemd-networkd`
-- And make sure it's enabled for future auto-start on WSL start
-`systemctl enable systemd-networkd`
-- Check if you've got IP now
+- Restart the networking service:
+```
+systemctl restart systemd-networkd
+```
+- And make sure it's enabled for future auto-start on WSL start:
+```
+systemctl enable systemd-networkd
+```
+- Check if you've got IP now: 
 `ip a`
 - You should see both IPv4 and IPv6 addresses on `eth0` interface !
 ```
-	6: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-		link/ether 5c:bb:f6:9e:ee:fa brd ff:ff:ff:ff:ff:ff
-		inet 192.168.0.34/24 metric 10 brd 192.168.0.255 scope global eth0
-		   valid_lft forever preferred_lft forever
-		inet6 fe80::5ebb:f6ff:fe9e:eefa/64 scope link
-		   valid_lft forever preferred_lft forever
+6: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+	link/ether 5c:bb:f6:9e:ee:fa brd ff:ff:ff:ff:ff:ff
+	inet 192.168.0.34/24 metric 10 brd 192.168.0.255 scope global eth0
+	   valid_lft forever preferred_lft forever
+	inet6 fe80::5ebb:f6ff:fe9e:eefa/64 scope link
+	   valid_lft forever preferred_lft forever
 ```
 
 From this point you can edit that same file and add static IP if you wish. We will do that in next section, but... !
@@ -520,14 +532,16 @@ From this point you can edit that same file and add static IP if you wish. We wi
 One more thing we need to configure is DNS resolving, as at this point you can only ping an IP eg. `8.8.8.8` but not FQDN like `google.com`:
 
 - So let's tell WSL not to handle DNS anymore
-- From same prompt where we're inside WSL distro prompt edit a `wsl.conf` file:
-`nano /etc/wsl.conf`
-- Contents of the file after modification should be (full file):
+- From the same prompt where we're inside WSL distro prompt edit a `wsl.conf` file:
 ```
-	[boot]
-	systemd=true
-	[network]
-	generateResolvConf = false
+nano /etc/wsl.conf
+```
+- Contents of the file after modification should be (full file contents):
+```
+[boot]
+systemd=true
+[network]
+generateResolvConf = false
 ```
 - Save and close file
 ```
@@ -536,25 +550,33 @@ CTRL+X
 ```
 - We've added `generateResolvConf = false` to tell WSL to **NOT** generate `resolv.conf` anymore, so now we have to generate it manually
 - Edit `resolv.conf` with `nano` :
-`nano /etc/resolv.conf`
+```
+nano /etc/resolv.conf
+```
 - Contents of this file:
-`nameserver 8.8.8.8`
+```
+nameserver 8.8.8.8
+```
 - Save and close file
 ```
 CTRL+X
 	Y
 ```
-- Restart service
-`systemctl restart systemd-resolved.service`
-- And make sure it is enabled for future auto-start
-`systemctl enable systemd-resolved.service`
-- Test resolving by simply pinging some FQDN, eg.
+- Restart service:
+```
+systemctl restart systemd-resolved.service
+```
+- And make sure it is enabled for future auto-start:
+```
+systemctl enable systemd-resolved.service
+```
+- Test resolving by simply pinging some FQDN, eg.:
 `ping google.com`
 
 ### Example for static IP configuration
 OK now we have networking and DNS resolving working, so we can also assign IP manually, this is NOT required if your DHCP works fine, but some people prefer static IPs (me included), so I'll show that here as well.
 
-- Open network config file again using that WSL prompt
+- Edit network config file again using that WSL prompt:
 ```
 nano /lib/systemd/network/wsl_external.network
 ```
@@ -569,21 +591,22 @@ DHCP=false
 Address=192.168.0.93/24
 Gateway=192.168.0.1
 ```
-
 - Save and close file
 ```
 CTRL+X
 	Y
 ```
 - It's probably obvious but let's explain the important stuff:
-	- `DHCP=false` simply opposite of true, disabling the DHCP addressing
-	- `Address=` enter IP that you desire, make sure it's free, available, and don't forget that `/24` at the end (subnet netmask)
+	- `DHCP=false` is simply opposite of previous true, disabling the DHCP addressing
+	- `Address=` enter IP that you desire, make sure it's valid, free, available, and don't forget that `/24` at the end (your subnet netmask)
 	- `Gateway=` is IP of your next hop, your gateway, router
-- Restart the networking service
-`systemctl restart systemd-networkd`
-- Check if you've got IP now
+- Restart the networking service:
+```
+systemctl restart systemd-networkd
+```
+- Check if you've got IP now:
 `ip a`
-- You should see new IP v4 address, note I had `.34` now I've setup `.93`
+- You should see new IPv4 address, note that earlier I had `.34`, and now I've setup `.93`
 - Testing this new IP from inside and outside says it's working!
 - Note that you may temporarily see both old and new IP via `ip a`, that will disappear after WSL restarts
 
@@ -597,8 +620,10 @@ wsl --shutdown
 ```
 - Reboot your whole PC
 - If you have WSL connected to that WiFi adapter, make sure you're reconnected (before or after starting WSL, doesn't matter); yeah, I must've skipped that part at least 3x while writing this tutorial
-- Start WSL instance again, eg.
-`wsl -d Ubuntu`
+- Start WSL instance again, eg.:
+```
+wsl -d Ubuntu
+```
 - If you still have that test Apache server check if webpage is available without manually starting any services, it should work from any 3rd device in same network; or you can go back to that part and re-run all commands for test (see earlier part of this guide)
 - Check IPs and networking from inside WSL with:
 ```
@@ -616,7 +641,7 @@ Useful links:
 https://randombytes.substack.com/p/bridged-networking-under-wsl
 - Article about systemd:
 https://randombytes.substack.com/p/migrating-from-systemd-genie-to-native
-- bottle-imp (I did not try this yet, but it's related to the systemd topic, fixes some WSL-systemd omissions):
+- bottle-imp (I did not try this yet, but it's related to the systemd topic, and fixes some WSL-systemd omissions):
 https://github.com/arkane-systems/bottle-imp
 
 And some official docs about `systemd` networking:
@@ -672,7 +697,7 @@ debugConsole=false
 # Turns on/off running GUI apps ; default is true
 guiApplications=true
 ```
-(Note: last 3 options are actually the default behaviour, ommitting them makes no difference)
+(Note: last 3 options are actually the default behaviour, omitting them makes no difference)
 
 **/etc/wsl.conf**
 ```
@@ -699,7 +724,8 @@ Gateway=192.168.0.1
 nameserver 8.8.8.8
 ```
 
-Using these configurations here is my IP from WSL:
+### Using these configurations here are my IP outputs from WSL:
+
 **ip a**
 ```
 6: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
@@ -739,7 +765,8 @@ Nov 12 23:43:43 DESKTOP-2BF6F64 systemd-networkd[88]: eth0: Gained carrier
 Nov 12 23:43:45 DESKTOP-2BF6F64 systemd-networkd[88]: eth0: Gained IPv6LL
 ```
 
-And this is my IP from Windows host:
+### And this is my IP on Windows host, sharing same physical adapter:
+
 **netsh interface ip show addresses "vEthernet (WSL_external)"**
 ```
 Configuration for interface "vEthernet (WSL_external)"
