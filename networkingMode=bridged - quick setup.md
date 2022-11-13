@@ -42,7 +42,7 @@ New-Item .wslconfig
 
 ### Inside text editor
 
-- Now add to your .wslconfig file text like this:
+- Now add to your `.wslconfig` file text like this:
 ```
 [wsl2]
 networkingMode=bridged
