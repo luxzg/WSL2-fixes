@@ -50,8 +50,6 @@ Links:
 
 - https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-20-04
 
-
-# DO NOT do these - they break X11 (network-manager-gnome in particular)
 ### NetworkManager & GUFW - GUI
 
 - GUI frontends for NetworkManager (network settings)
@@ -70,22 +68,22 @@ nm-connection-editor &
 ```
 
 ### NetPlan, NetworkManager, GUI - networking
-This is just for people wanting to use NetPlan and NetworkManager, eg. if they have lots of VPNs etc
+This is just for people wanting to use NetPlan and NetworkManager, eg. if they have lots of VPNs etc.
 
 - you first need networking to work in any way (see guides) so you can use `apt` to install new packages
-- once you have working connection run in WSL:
+- once you have working connection run these commands in WSL:
 ```
 sudo su
   <password>
 apt install network-manager
 apt install network-manager-gnome
 ```
-- with packages installed we need to reconfigure networking, if you've used systemd guide that means deleting some files, creating new ones
-- we create one empty files to let NetworkMAnager know it will manage connections
-- we remove old .network config that contains networkd configuration
-- we remove old resolv.conf that was manually created to manage DNS (nameservers)
+- with packages installed we need to reconfigure networking, if you've used `systemd` guide that means deleting some files, and creating new ones
+- we create one empty files to let NetworkManager know it will manage connections
+- we remove old `.network` config that contains `networkd` configuration
+- we remove old `resolv.conf` that was manually created to manage DNS (nameservers)
 - we create link to new resolved stub allowing it to manage DNS behind the scenes
-- we create actual NetPlan config (DHCP, later we can change in GUI)
+- we create actual NetPlan config (DHCP, later we can change this in GUI)
 ```
 touch /etc/NetworkManager/conf.d/10-globally-managed-devices.conf
 rm /lib/systemd/network/wsl_external.network
@@ -93,11 +91,7 @@ rm /etc/resolv.conf
 ln -s /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 nano /etc/netplan/01-netcfg.yaml
 ```
-- tell NetworkManager it may manage connections, edit file, change `managed=false` to `managed=true`
-```
-nano /etc/NetworkManager/NetworkManager.conf
-```
-- the following is YAML and it is very sensitive to spacing, use copy paste
+- `.yaml` file contents, the following is YAML and it is very sensitive to spacing, use copy paste
 ```
 network:
   renderer: NetworkManager
@@ -106,7 +100,11 @@ network:
       dhcp4: yes
   version: 2
 ```
-- apply all settings and enable all services, then show eth0 settings
+- tell NetworkManager it may manage connections, edit file, change `managed=false` to `managed=true` in this file
+```
+nano /etc/NetworkManager/NetworkManager.conf
+```
+- apply all settings and enable all services, then show `eth0` settings
 ```
 systemctl enable NetworkManager
 systemctl restart NetworkManager
@@ -114,7 +112,7 @@ netplan apply
 ip a
 nmcli device show eth0
 ```
-- nmcli on my QSL instance showed this (DHCP assigned)
+- `nmcli` on my WSL instance showed this (DHCP assigned)
 ```
 GENERAL.DEVICE:                         eth0
 GENERAL.TYPE:                           ethernet
@@ -140,11 +138,13 @@ IP6.ROUTE[1]:                           dst = fe80::/64, nh = ::, mt = 256
 ```
 nm-connection-editor &
 ```
-- I've deleted DHCP config, created new, used eth0, assigned static IP, static DNS, etc
-- Save and then close GUI Network Manager
+- I've used GUI to delete manually created DHCP config, created new config, used `eth0`, assigned static IP, static DNS, etc.
+- Save changes in GUI, and then close GUI Network Manager, it should automatically apply new settings to your network interface
+- now check network status, it should show new settings applied
 - `ip a` output
 ```
 ip a
+
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -166,9 +166,10 @@ ip a
     inet6 fe80::76ed:7355:f46e:9072/64 scope link noprefixroute
        valid_lft forever preferred_lft forever
 ```
-- nmcli output
+- `nmcli device show eth0` output
 ```
 nmcli device show eth0
+
 GENERAL.DEVICE:                         eth0
 GENERAL.TYPE:                           ethernet
 GENERAL.HWADDR:                         5C:BB:F6:9E:EE:55
