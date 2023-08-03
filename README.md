@@ -21,6 +21,8 @@ Contains **full** guide with detailed instructions to setting up bridged network
 * `wsl2-net.ps1` was a workaround, for people with Win10 Pro, which uses Hyper-V Virtual Switch functionality, some Powershell, and some bash with WSL commands, to install WSL2 (Ubuntu 20.04), and setup a proof-of-concept WSL2 instance that has NORMAL IP address exposed to local network, as would a standalone VM have. This would allow you to access WSL2 services from devices in your local network, or from public Internet (both require proper firewall and routing rules to be setup on your local network router/firewall device(s))
   * (obsolete)
 
+* `Hyper-V_VMSwitchReset.ps` to change the network adapter that is bound to the Hyper-V Virtual Switch i.e. changing from wired to wireless networking you net to recreate the switch and bind the "other" network adapter to it. This is only possible if the WSL instances are not running. You can use this to rebind the network adpater automatically that is found and connected to a network.
+
 * `scratchbook.md` is just to remember stuff I need sometimes on WSL
   * Updated: 2022-11-13
   * Link: https://github.com/luxzg/WSL2-fixes/blob/master/scratchbook.md
